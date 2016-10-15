@@ -2,6 +2,7 @@
 #include "str.h"
 #include <stdexcept>
 #include <cstddef>
+#include <cstring>
 #include <ostream>
 
 using value_type = char;
