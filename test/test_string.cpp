@@ -5,7 +5,7 @@
 
 void ctor_novalue()
 {
-    Str s{};
+    Str s;
     assert(s.empty() == true);
     assert(*(s.data()) == '\0');
     std::cout<<"OK"<<std::endl;
@@ -23,7 +23,7 @@ void ctor_value_char()
 
 void ctor_string()
 {
-    char* test = {"test text\0"};
+    char test[] = "test text\0";
     Str s{test};
     assert(s.size() == 9);
     for(unsigned int i = 0; i < s.size(); i++){
@@ -35,7 +35,7 @@ void ctor_string()
 
 void ctor_value_string()
 {
-    char* test = {"test text"};
+    char test[] = "test text";
     Str s{test,5};
     assert(s.size() == 5);
     for(unsigned int i = 0; i < s.size(); i++){
@@ -116,7 +116,10 @@ void back()
 void date()
 {
     Str s{"true"};
-    //assert(s.data() == "true"); ??
+    char test[] = "true";
+    for(unsigned int i = 0; i < s.size(); i++){
+            assert(*(s.data()+i) == test[i]);
+    }
     assert(*(s.data()) == 't');
     std::cout<<"OK"<<std::endl;
 }
@@ -158,9 +161,9 @@ void clear()
 void push_back()
 {
     Str s{"hello"};
-    char* test = {"world"};
-    char* test1 = {"helloworld"};
-    int k =s.size();
+    char test[] = "world";
+    char test1[] = "helloworld";
+    unsigned int k =s.size();
     for(unsigned int i = 0; i < k; i++){
             s.push_back(test[i]);
     }
@@ -175,8 +178,8 @@ void push_back()
 void pop_back()
 {
     Str s{"hello world"};
-    char* test = {"hello"};
-    int k = s.size()-5;
+    char test[] = "hello";
+    unsigned int k = s.size()-5;
     for(unsigned int i = 0; i < k; i++){
             s.pop_back();
     }
@@ -201,8 +204,8 @@ void oper_plus_equal_char()
 void oper_plus_equal_string()
 {
     Str s{"test"};
-    char* test = {" work"};
-    char* test1 = {"test work"};
+    char test[] = " work";
+    char test1[] = "test work";
     s += test;
     for(unsigned int i = 0; i < 9; i++){
             assert(s[i] == test1[i]);
@@ -215,7 +218,7 @@ void oper_plus_equal_class()
 {
     Str s{"test"};
     Str test{" work"};
-    char* test1 = {"test work"};
+    char test1[] = "test work";
     s += test;
     for(unsigned int i = 0; i < 9; i++){
             assert(s[i] == test1[i]);
@@ -257,10 +260,10 @@ void find_class()
 void find_string()
 {
     Str s{"good job friend !"};
-    char* s1 = {"!"};
-    char* s2 = {"job"};
-    char* s3 = {"o"};
-    char* s4 = {"z"};
+    char s1[] = "!";
+    char s2[] = "job";
+    char s3[] = "o";
+    char s4[] = "z";
     auto k1 = s.find(s1,12);
     auto k2 = s.find(s2);
     auto k3 = s.find(s3);
