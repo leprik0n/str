@@ -14,7 +14,7 @@ include_directories(include)
 
 enable_testing()
 
-set(SOURCES str.cpp)
+set(SOURCES scr/str.cpp)
 
 add_executable(test_string test/test_string.cpp ${SOURCES})
 
