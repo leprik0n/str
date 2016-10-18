@@ -20,7 +20,7 @@ void ctor_value_char()
     assert(s.size() == 10);
     for(unsigned int i = 0; i < s.size(); i++)
         assert(s[i] == 's');
-    assert(s[s.size()] == '\0');
+    assert(*(s.data()+s.size()) == '\0');
     std::cout<<"2_OK"<<std::endl;
 }
 
