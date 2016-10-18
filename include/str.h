@@ -1,21 +1,22 @@
-// Reduced version of std::string interface for education porpose
 #pragma once
 
 #include <cstddef>
 #include <ostream>
+
+namespace pm{
 
 class Str {
 public:
     //====================
     // Member types
     //====================
-    using value_type = char;
-    using size_type = std::size_t;
-    using difference_type = std::ptrdiff_t;
-    using reference = value_type&;
-    using const_reference = const value_type&;
-    using pointer = value_type*;
-    using const_pointer = const value_type*;
+    typedef char value_type;
+    typedef std::size_t size_type;
+    typedef std::ptrdiff_t difference_type;
+    typedef value_type& reference;
+    typedef const value_type& const_reference;
+    typedef value_type* pointer;
+    typedef const value_type* const_pointer;
 
     //=====================
     // Member functions
@@ -96,6 +97,8 @@ public:
     // appends character to the end
     void push_back(value_type ch);
 
+    void push_back(const char* s);
+
     // removes the last character
     void pop_back();
 
@@ -148,3 +151,5 @@ bool operator>=(const Str& lhs, const Str& rhs);
 
 // Performs stream output on Str
 std::ostream& operator<<(std::ostream& stream, const Str& rhs);
+
+}
