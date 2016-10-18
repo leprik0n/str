@@ -1,19 +1,14 @@
-#include <iostream>
 #include "str.h"
+
+#include <iostream>
 #include <stdexcept>
 #include <cstddef>
 #include <cstring>
 #include <ostream>
 
-using value_type = char;
-using size_type = std::size_t;
-using difference_type = std::ptrdiff_t;
-using reference = value_type&;
-using const_reference = const value_type&;
-using pointer = value_type*;
-using const_pointer = const value_type*;
-char npos = '\0';
+using namespace pm;
 
+Str::value_type npos = '\0';
 
 Str::Str()
     :str(&npos)
@@ -23,14 +18,12 @@ Str::Str(size_type count, value_type ch)
     :str(new value_type[count+1])
     ,len(count)
 {
-    for(size_type i = 0; i < len; i++){
-        str[i] = ch;
-    }
+    std::fill_n(str,count,ch);
 }
 
 Str::Str(const_pointer s)
-    :str(new value_type[strlen(s)+1])
-    ,len(strlen(s))
+    :len(strlen(s))
+    ,str(new value_type[len+1])
 {
     strcpy(str,s);
 }
@@ -39,9 +32,7 @@ Str::Str(const_pointer s, size_type count)
     :str(new value_type[count+1])
     ,len(count)
 {
-    for(size_type i = 0; i < count; i++){
-        str[i] = s[i];
-    }
+    strncpy(str,s,count);
 }
 
 Str::Str(const Str& other)
@@ -61,7 +52,9 @@ Str::Str(Str&& other) noexcept
 
 Str::~Str()
 {
-    delete[]str;
+    if(str != &npos){
+        delete[]str;
+    }
 }
 
 Str& Str::operator=(const Str& other)
@@ -73,7 +66,9 @@ Str& Str::operator=(const Str& other)
 
 Str& Str::operator=(Str&& other) noexcept
 {
-    delete[]str;
+    if(str != &npos){
+        delete[]str;
+    }
     str = other.str;
     len = other.len;
     other.str = &npos;
@@ -81,17 +76,17 @@ Str& Str::operator=(Str&& other) noexcept
     return *this;
 }
 
-reference Str::operator[](size_type idx) noexcept
+Str::reference Str::operator[](size_type idx) noexcept
 {
     return str[idx];
 }
 
-const_reference Str::operator[](size_type idx) const noexcept
+Str::const_reference Str::operator[](size_type idx) const noexcept
 {
     return str[idx];
 }
 
-reference Str::at(size_type idx)
+Str::reference Str::at(size_type idx)
 {
     if(idx >= len){
         throw std::out_of_range("out of range");
@@ -99,7 +94,7 @@ reference Str::at(size_type idx)
     return str[idx];
 }
 
-const_reference Str::at(size_type idx) const
+Str::const_reference Str::at(size_type idx) const
 {
     if(idx >= len){
         throw std::out_of_range("out of range");
@@ -107,54 +102,56 @@ const_reference Str::at(size_type idx) const
     return str[idx];
 }
 
-reference Str::front() noexcept
+Str::reference Str::front() noexcept
 {
     return str[0];
 }
 
-const_reference Str::front() const noexcept
+Str::const_reference Str::front() const noexcept
 {
     return str[0];
 }
 
-reference Str::back() noexcept
+Str::reference Str::back() noexcept
 {
     return str[len-1];
 }
 
-const_reference Str::back() const noexcept
+Str::const_reference Str::back() const noexcept
 {
     return str[len-1];
 }
 
-pointer Str::data() noexcept
+Str::pointer Str::data() noexcept
 {
     return str;
 }
 
-const_pointer Str::data() const noexcept
+Str::const_pointer Str::data() const noexcept
 {
     return str;
 }
 
 bool Str::empty() const noexcept
 {
-    return(!len) ? true : false;
+    return len == 0;
 }
 
-size_type Str::size() const noexcept
+Str::size_type Str::size() const noexcept
 {
     return len;
 }
 
-size_type Str::capacity() const noexcept
+Str::size_type Str::capacity() const noexcept
 {
-    return sizeof(str)+len;
+    return len;
 }
 
 void Str::clear()
 {
-    delete[]str;
+    if(str != &npos){
+        delete[]str;
+    }
     len = 0;
     str = &npos;
 }
@@ -162,40 +159,44 @@ void Str::clear()
 void Str::push_back(value_type ch)
 {
     len++;
-    pointer ptr = new value_type[len + 1];
-    for(size_type i = 0; i < len-1; i++){
-        ptr[i] = str[i];
+    pointer buf = new value_type[len + 1];
+    strcpy(buf,str);
+    buf[len - 1] = ch;
+    buf[len] = npos;
+    if(str != &npos){
+        delete[]str;
     }
-    delete[]str;
-    ptr[len-1] = ch;
-    ptr[len] = npos;
-    str = new value_type[len + 1];
-    for(size_type i = 0; i < len; i++){
-        str[i] = ptr[i];
+    str = buf;
+}
+
+void Str::push_back(const char* s)
+{
+    len += strlen(s);
+    pointer buf = new value_type[len+1];
+    strcpy(buf,str);
+    strcat(buf,s);
+    if(str != &npos){
+        delete[]str;
     }
-    str[len] = npos;
-    delete[]ptr;
+    str = buf;
 }
 
 void Str::pop_back()
 {
     if(len){
         len--;
-        pointer ptr = new value_type[len+1];
+        pointer buf = new value_type[len + 1];
         for(size_type i = 0; i < len; i++){
-                ptr[i] = str[i];
+            buf[i] = str[i];
         }
-        ptr[len] = npos;
-        delete[]str;
-        str = new value_type[len+1];
-        for(size_type i = 0; i < len; i++){
-                str[i] = ptr[i];
+        buf[len] = npos;
+        if(str != &npos){
+            delete[]str;
         }
-        str[len] = npos;
-        delete[]ptr;
+        str = buf;
     }
     else{
-        str = &npos;
+        throw std::invalid_argument("len == 0");
     }
 }
 
@@ -207,17 +208,13 @@ Str& Str::operator+=(value_type ch)
 
 Str& Str::operator+=(const char* s)
 {
-    for(size_type i = 0; i < strlen(s); i++){
-            push_back(s[i]);
-    }
+    push_back(s);
     return *this;
 }
 
 Str& Str::operator+=(const Str& other)
 {
-    for(size_type i = 0; i < other.size(); i++){
-            push_back(other[i]);
-    }
+    push_back(other.str);
     return *this;
 }
 
@@ -227,20 +224,20 @@ void Str::swap(Str& other) noexcept
     std::swap(len,other.len);
 }
 
-size_type Str::find(const Str& st, size_type pos) const noexcept
+Str::size_type Str::find(const char* st, size_type pos) const noexcept
 {
-    for(size_type i = pos; i < len; i++){
-            if(str[i] == *(st.data())){
+     for(size_type i = pos; i < len; i++){
+            size_type k = 0;
+            if(str[i] == st[k]){
                 size_type j = i;
-                size_type k = 0;
-                while (*(st.data()+k)){
-                    if(str[j] != *(st.data()+k)){
+                while (st[k] != npos){
+                    if(str[j] != st[k]){
                         break;
                     }
                     j++;
                     k++;
                 }
-                if(*(st.data()+k) == npos){
+                if(st[k] == npos){
                     return j-k;
                 }
                 i += j-i;
@@ -249,14 +246,12 @@ size_type Str::find(const Str& st, size_type pos) const noexcept
     return npos;
 }
 
-size_type Str::find(const char* st, size_type pos) const noexcept
+Str::size_type Str::find(const Str& st, size_type pos) const noexcept
 {
-    Str stroka(st);
-    return find(stroka,pos);
-
+    return find(st.str,pos);
 }
 
-size_type Str::find(value_type ch, size_type pos) const noexcept
+Str::size_type Str::find(value_type ch, size_type pos) const noexcept
 {
     for(size_type i = pos; i < len; i++){
             if(str[i] == ch){
@@ -266,45 +261,49 @@ size_type Str::find(value_type ch, size_type pos) const noexcept
     return npos;
 }
 
-Str operator+(const Str& lhs, const Str& rhs)
+Str pm::operator+(const Str& lhs, const Str& rhs)
 {
     return Str(lhs) += rhs;
 }
 
-bool operator==(const Str& lhs, const Str& rhs)
+bool pm::operator==(const Str& lhs, const Str& rhs)
 {
-    size_type i = 0;
-    for(; *(lhs.data()+i) == *(rhs.data()+i) && i < lhs.size(); i++);
-    return (i == lhs.size()) ? true : false;
+    if(lhs.size() == rhs.size()){
+            Str::size_type i = 0;
+            for(; lhs[i] == rhs[i] && i < lhs.size() ; i++);
+            return (i == lhs.size()) ? true : false;
+    }
+    return false;
 }
 
-bool operator!=(const Str& lhs, const Str& rhs)
+bool pm::operator!=(const Str& lhs, const Str& rhs)
 {
     return !(lhs == rhs);
 }
 
-bool operator<(const Str& lhs, const Str& rhs)
+bool pm::operator<(const Str& lhs, const Str& rhs)
 {
-    return (lhs.size() < rhs.size());
+    return (strcmp(lhs.data(), rhs.data()) < 0) ? true : false;
 }
 
-bool operator>(const Str& lhs, const Str& rhs)
+bool pm::operator>(const Str& lhs, const Str& rhs)
 {
     return !(lhs < rhs);
 }
 
-bool operator<=(const Str& lhs, const Str& rhs)
+bool pm::operator<=(const Str& lhs, const Str& rhs)
 {
     return (lhs == rhs)||(lhs < rhs);
 }
 
-bool operator>=(const Str& lhs, const Str& rhs)
+bool pm::operator>=(const Str& lhs, const Str& rhs)
 {
     return (lhs == rhs)||(lhs > rhs);
 }
 
-std::ostream& operator<<(std::ostream& stream, const Str& rhs)
+std::ostream& pm::operator<<(std::ostream& stream, const Str& rhs)
 {
     stream<<rhs.data()<<' ';
     return stream;
 }
+
