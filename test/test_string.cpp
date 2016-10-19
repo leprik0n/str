@@ -10,7 +10,7 @@ void ctor_novalue()
 {
     Str s;
     assert(s.empty() == true);
-    assert(*(s.data()) == '\0');
+    assert(s[s.size()] == '\0');
     std::cout<<"1_OK"<<std::endl;
 }
 
