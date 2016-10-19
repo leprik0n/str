@@ -10,14 +10,7 @@ public:
     //====================
     // Member types
     //====================
-    /*typedef char value_type;
-    typedef std::size_t size_type;
-    typedef std::ptrdiff_t difference_type;
-    typedef value_type& reference;
-    typedef const value_type& const_reference;
-    typedef value_type* pointer;
-    typedef const value_type* const_pointer;
-*/
+    
     using value_type = char;
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;
