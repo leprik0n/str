@@ -19,6 +19,7 @@ Str::Str(size_type count, value_type ch)
     ,len(count)
 {
     std::fill_n(str,count,ch);
+    str[len] = npos;
 }
 
 Str::Str(const_pointer s)
@@ -33,6 +34,7 @@ Str::Str(const_pointer s, size_type count)
     ,len(count)
 {
     strncpy(str,s,count);
+    str[len] = npos;
 }
 
 Str::Str(const Str& other)
@@ -50,11 +52,16 @@ Str::Str(Str&& other) noexcept
     other.len = 0;
 }
 
-Str::~Str()
+void Str::soother()
 {
     if(str != &npos){
         delete[]str;
-    }
+    }    
+}
+
+Str::~Str()
+{
+    soother();
 }
 
 Str& Str::operator=(const Str& other)
@@ -66,9 +73,7 @@ Str& Str::operator=(const Str& other)
 
 Str& Str::operator=(Str&& other) noexcept
 {
-    if(str != &npos){
-        delete[]str;
-    }
+    soother();
     str = other.str;
     len = other.len;
     other.str = &npos;
@@ -149,9 +154,7 @@ Str::size_type Str::capacity() const noexcept
 
 void Str::clear()
 {
-    if(str != &npos){
-        delete[]str;
-    }
+    soother();
     len = 0;
     str = &npos;
 }
@@ -163,9 +166,7 @@ void Str::push_back(value_type ch)
     strcpy(buf,str);
     buf[len - 1] = ch;
     buf[len] = npos;
-    if(str != &npos){
-        delete[]str;
-    }
+    soother();
     str = buf;
 }
 
@@ -175,9 +176,7 @@ void Str::push_back(const char* s)
     pointer buf = new value_type[len+1];
     strcpy(buf,str);
     strcat(buf,s);
-    if(str != &npos){
-        delete[]str;
-    }
+    soother();
     str = buf;
 }
 
@@ -190,9 +189,7 @@ void Str::pop_back()
             buf[i] = str[i];
         }
         buf[len] = npos;
-        if(str != &npos){
-            delete[]str;
-        }
+        soother();
         str = buf;
     }
     else{
