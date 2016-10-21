@@ -39,7 +39,7 @@ public:
 
     // Move constructor
     Str(Str&& other) noexcept;
-
+    
     // Dectructor
     ~Str();
 
@@ -92,6 +92,8 @@ public:
     //=====================
     // Operations
     //=====================
+    
+    void soother();
 
     void clear();
 
