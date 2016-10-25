@@ -128,6 +128,7 @@ public:
 
 private:
     size_type len;
+    size_type memory;
     pointer str;
 
 };
