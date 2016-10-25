@@ -181,7 +181,7 @@ void Str::push_back(value_type ch)
         str = ptr;
     }
     if(len > memory){
-        memory *=2;
+        memory *= 2;
         pointer ptr = new value_type[memory + 1];
         strcpy(ptr,str);
         ptr[len-1] = ch;
