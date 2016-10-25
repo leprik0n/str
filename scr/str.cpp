@@ -12,11 +12,13 @@ Str::value_type npos = '\0';
 
 Str::Str()
     :str(&npos)
-    ,len(0){}
+    ,len(0)
+    ,memory(0){}
 
 Str::Str(size_type count, value_type ch)
     :str(new value_type[count+1])
     ,len(count)
+    ,memory(count)
 {
     std::fill_n(str,count,ch);
     str[len] = npos;
@@ -25,6 +27,7 @@ Str::Str(size_type count, value_type ch)
 Str::Str(const_pointer s)
     :len(strlen(s))
     ,str(new value_type[len+1])
+    ,memory(len)
 {
     strcpy(str,s);
 }
@@ -32,6 +35,7 @@ Str::Str(const_pointer s)
 Str::Str(const_pointer s, size_type count)
     :str(new value_type[count+1])
     ,len(count)
+    ,memory(count)
 {
     strncpy(str,s,count);
     str[len] = npos;
@@ -40,6 +44,7 @@ Str::Str(const_pointer s, size_type count)
 Str::Str(const Str& other)
     :str(new value_type[other.len+1])
     ,len(other.len)
+    ,memory(other.memory)
 {
     strcpy(str,other.str);
 }
@@ -47,6 +52,7 @@ Str::Str(const Str& other)
 Str::Str(Str&& other) noexcept
     :str(other.str)
     ,len(other.len)
+    ,memory(other.memory)
 {
     other.str = &npos;
     other.len = 0;
@@ -56,7 +62,7 @@ void Str::soother()
 {
     if(str != &npos){
         delete[]str;
-    }    
+    }
 }
 
 Str::~Str()
@@ -76,6 +82,7 @@ Str& Str::operator=(Str&& other) noexcept
     soother();
     str = other.str;
     len = other.len;
+    memory = other.memory;
     other.str = &npos;
     other.len = 0;
     return *this;
@@ -149,7 +156,7 @@ Str::size_type Str::size() const noexcept
 
 Str::size_type Str::capacity() const noexcept
 {
-    return len;
+    return memory;
 }
 
 void Str::clear()
@@ -162,39 +169,38 @@ void Str::clear()
 void Str::push_back(value_type ch)
 {
     len++;
-    pointer buf = new value_type[len + 1];
-    strcpy(buf,str);
-    buf[len - 1] = ch;
-    buf[len] = npos;
-    soother();
-    str = buf;
-}
-
-void Str::push_back(const char* s)
-{
-    len += strlen(s);
-    pointer buf = new value_type[len+1];
-    strcpy(buf,str);
-    strcat(buf,s);
-    soother();
-    str = buf;
+    if(len <= memory){
+        str[len-1] = ch;
+        str[len] = npos;
+    }
+    if(!memory){
+        memory = 1;
+        pointer ptr = new value_type[2];
+        ptr[0] = ch;
+        ptr[1] = npos;
+        str = ptr;
+    }
+    if(len > memory){
+        memory *=2;
+        pointer ptr = new value_type[memory + 1];
+        strcpy(ptr,str);
+        ptr[len-1] = ch;
+        ptr[len] = npos;
+        soother();
+        str = ptr;
+    }
 }
 
 void Str::pop_back()
 {
     if(len){
         len--;
-        pointer buf = new value_type[len + 1];
-        for(size_type i = 0; i < len; i++){
-            buf[i] = str[i];
-        }
-        buf[len] = npos;
-        soother();
-        str = buf;
+        str[len] = npos;
     }
     else{
         throw std::invalid_argument("len == 0");
     }
+
 }
 
 Str& Str::operator+=(value_type ch)
@@ -205,20 +211,23 @@ Str& Str::operator+=(value_type ch)
 
 Str& Str::operator+=(const char* s)
 {
-    push_back(s);
+    size_type l = strlen(s);
+    for(size_type i = 0; i < l; i++){
+        push_back(s[i]);
+    }
     return *this;
 }
 
 Str& Str::operator+=(const Str& other)
 {
-    push_back(other.str);
-    return *this;
+    return operator+=(other.str);
 }
 
 void Str::swap(Str& other) noexcept
 {
     std::swap(str,other.str);
     std::swap(len,other.len);
+    std::swap(memory,other.memory);
 }
 
 Str::size_type Str::find(const char* st, size_type pos) const noexcept
@@ -266,9 +275,9 @@ Str pm::operator+(const Str& lhs, const Str& rhs)
 bool pm::operator==(const Str& lhs, const Str& rhs)
 {
     if(lhs.size() == rhs.size()){
-            Str::size_type i = 0;
-            for(; lhs[i] == rhs[i] && i < lhs.size() ; i++);
-            return (i == lhs.size()) ? true : false;
+            if(strncmp(lhs.data(),rhs.data(),rhs.size()) == 0){
+                return true;
+            }
     }
     return false;
 }
@@ -303,4 +312,3 @@ std::ostream& pm::operator<<(std::ostream& stream, const Str& rhs)
     stream<<rhs.data()<<' ';
     return stream;
 }
-
