@@ -100,8 +100,6 @@ public:
     // appends character to the end
     void push_back(value_type ch);
 
-    void push_back(const char* s);
-
     // removes the last character
     void pop_back();
 
