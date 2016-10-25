@@ -10,7 +10,7 @@ void ctor_novalue()
 {
     Str s;
     assert(s.empty() == true);
-    assert(s[s.size()] == '\0');
+    assert(*(s.data()) == '\0');
     std::cout<<"1_OK"<<std::endl;
 }
 
@@ -20,7 +20,7 @@ void ctor_value_char()
     assert(s.size() == 10);
     for(unsigned int i = 0; i < s.size(); i++)
         assert(s[i] == 's');
-    //assert(s[s.size()] == '\0');
+    assert(s[s.size()] == '\0');
     std::cout<<"2_OK"<<std::endl;
 }
 
@@ -44,7 +44,7 @@ void ctor_value_string()
     for(unsigned int i = 0; i < s.size(); i++){
             assert(s[i] == test[i]);
     }
-    //assert(s[s.size()] == '\0');
+    assert(s[s.size()] == '\0');
     std::cout<<"4_OK"<<std::endl;
 }
 
@@ -161,7 +161,7 @@ void clear()
     std::cout<<"15_OK"<<std::endl;
 }
 
-void push_back_char()
+void push_back()
 {
     Str s{"hello"};
     char test[] = "world";
@@ -173,23 +173,10 @@ void push_back_char()
     for(unsigned int i = 0; i < s.size(); i++){
             assert(s[i] == test1[i]);
     }
+    assert(s.capacity() == 10);
     assert(s.size() == 10);
     assert(s[s.size()] == '\0');
     std::cout<<"16_OK"<<std::endl;
-}
-
-void push_back_string()
-{
-    Str s{"hello"};
-    char test[] = "world";
-    char test1[] = "helloworld";
-    s.push_back(test);
-    for(unsigned int i = 0; i < s.size(); i++){
-            assert(s[i] == test1[i]);
-    }
-    assert(s.size() == 10);
-    assert(s[s.size()] == '\0');
-    std::cout<<"17_OK"<<std::endl;
 }
 
 void pop_back()
@@ -203,9 +190,10 @@ void pop_back()
     for(unsigned int i = 0; i < k; i++){
             assert(s[i] == test[i]);
     }
+    assert(s.capacity() == 11);
     assert(s.size() == 5);
     assert(s[s.size()] == '\0');
-    std::cout<<"18_OK"<<std::endl;
+    std::cout<<"17_OK"<<std::endl;
 }
 
 void oper_plus_equal_char()
@@ -215,7 +203,7 @@ void oper_plus_equal_char()
     assert(s[5] == 's');
     assert(s.size() == 6);
     assert(s[s.size()] == '\0');
-    std::cout<<"19_OK"<<std::endl;
+    std::cout<<"18_OK"<<std::endl;
 }
 
 void oper_plus_equal_string()
@@ -228,7 +216,7 @@ void oper_plus_equal_string()
             assert(s[i] == test1[i]);
     }
     assert(s.size() == 9);
-    std::cout<<"20_OK"<<std::endl;
+    std::cout<<"19_OK"<<std::endl;
 }
 
 void oper_plus_equal_class()
@@ -241,7 +229,7 @@ void oper_plus_equal_class()
             assert(s[i] == test1[i]);
     }
     assert(s.size() == 9);
-    std::cout<<"21_OK"<<std::endl;
+    std::cout<<"20_OK"<<std::endl;
 }
 
 void swop()
@@ -254,7 +242,7 @@ void swop()
             assert(s[i] == s1[i]);
     }
     assert(s.size() == 4);
-    std::cout<<"22_OK"<<std::endl;
+    std::cout<<"21_OK"<<std::endl;
 }
 
 void find_class()
@@ -271,7 +259,7 @@ void find_class()
     assert(k2 == 7);
     assert(k3 == 10);
     assert(k4 == '\0');
-    std::cout<<"23_OK"<<std::endl;
+    std::cout<<"22_OK"<<std::endl;
 }
 
 void find_string()
@@ -289,7 +277,7 @@ void find_string()
     assert(k2 == 5);
     assert(k3 == 1);
     assert(k4 == '\0');
-    std::cout<<"24_OK"<<std::endl;
+    std::cout<<"23_OK"<<std::endl;
 }
 
 void find_char()
@@ -307,7 +295,7 @@ void find_char()
     assert(k2 == '\0');
     assert(k3 == 10);
     assert(k4 == '\0');
-    std::cout<<"25_OK"<<std::endl;
+    std::cout<<"24_OK"<<std::endl;
 }
 
 void oper_plus_class()
@@ -320,7 +308,7 @@ void oper_plus_class()
             assert(s2[i+s.size()] == s1[i]);
     }
     assert(s2[s2.size()] == '\0');
-    std::cout<<"26_OK"<<std::endl;
+    std::cout<<"25_OK"<<std::endl;
 }
 
 void oper_equal()
@@ -332,7 +320,7 @@ void oper_equal()
     bool b2 = (s == s2);
     assert(b1 == false);
     assert(b2 == true);
-    std::cout<<"27_OK"<<std::endl;
+    std::cout<<"26_OK"<<std::endl;
 }
 
 void oper_not_equal()
@@ -344,7 +332,7 @@ void oper_not_equal()
     bool b2 = (s != s2);
     assert(b1 == true);
     assert(b2 == false);
-    std::cout<<"28_OK"<<std::endl;
+    std::cout<<"27_OK"<<std::endl;
 }
 
 void oper_less()
@@ -359,7 +347,7 @@ void oper_less()
     assert(b1 == true);
     assert(b2 == false);
     assert(b3 == false);
-    std::cout<<"29_OK"<<std::endl;
+    std::cout<<"28_OK"<<std::endl;
 }
 
 void oper_more()
@@ -371,7 +359,7 @@ void oper_more()
     bool b2 = (s > s2);
     assert(b1 == false);
     assert(b2 == true);
-    std::cout<<"30_OK"<<std::endl;
+    std::cout<<"29_OK"<<std::endl;
 }
 
 void oper_less_equal()
@@ -386,7 +374,7 @@ void oper_less_equal()
     assert(b1 == true);
     assert(b2 == true);
     assert(b3 == false);
-    std::cout<<"31_OK"<<std::endl;
+    std::cout<<"30_OK"<<std::endl;
 }
 
 void oper_large_equal()
@@ -401,7 +389,7 @@ void oper_large_equal()
     assert(b1 == false);
     assert(b2 == false);
     assert(b3 == true);
-    std::cout<<"32_OK"<<std::endl;
+    std::cout<<"31_OK"<<std::endl;
 }
 
 int main()
@@ -409,7 +397,6 @@ int main()
 
 try
 {
-
 ctor_novalue();
 ctor_value_char();
 ctor_string();
@@ -425,8 +412,7 @@ empty();
 size();
 capacity();
 clear();
-push_back_char();
-push_back_string();
+push_back();
 pop_back();
 oper_plus_equal_char();
 oper_plus_equal_string();
@@ -442,7 +428,6 @@ oper_less();
 oper_more();
 oper_less_equal();
 oper_large_equal();
-
 }
 
 catch(std::invalid_argument& oop)
