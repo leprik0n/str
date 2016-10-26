@@ -168,21 +168,23 @@ void Str::clear()
 
 void Str::push_back(value_type ch)
 {
-    len++;
-    if(len <= memory){
+    if(len+1 <= memory){
+        len++;
         str[len-1] = ch;
         str[len] = npos;
     }
     if(!memory){
-        memory = 1;
         pointer ptr = new value_type[2];
+        memory = 1;
+        len = 1;
         ptr[0] = ch;
         ptr[1] = npos;
         str = ptr;
     }
-    if(len > memory){
+    if(len+1 > memory){
+        pointer ptr = new value_type[2 * memory + 1];
         memory *= 2;
-        pointer ptr = new value_type[memory + 1];
+        len++;
         strcpy(ptr,str);
         ptr[len-1] = ch;
         ptr[len] = npos;
