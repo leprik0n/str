@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <cstring>
 #include <ostream>
+#include <new>
 
 using namespace pm;
 
