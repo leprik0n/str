@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <cassert>
+#include <new>
 
 using namespace pm;
 
