@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <cassert>
+#include <cstring>
 #include <new>
 
 using namespace pm;
@@ -30,9 +31,7 @@ void ctor_string()
     char test[] = "test text\0";
     Str s{test};
     assert(s.size() == 9);
-    for(unsigned int i = 0; i < s.size(); i++){
-            assert(s[i] == test[i]);
-    }
+    assert(strcmp(s.data(),test) == 0);
     assert(s[s.size()] == '\0');
     std::cout<<"3_OK"<<std::endl;
 }
