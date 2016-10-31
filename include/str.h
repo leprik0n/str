@@ -1,17 +1,16 @@
-// Reduced version of std::string interface for education porpose
-
 #pragma once
 
 #include <cstddef>
 #include <ostream>
 
-namespace pm {
+namespace pm{
 
 class Str {
 public:
     //====================
     // Member types
     //====================
+    
     using value_type = char;
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;
@@ -19,7 +18,7 @@ public:
     using const_reference = const value_type&;
     using pointer = value_type*;
     using const_pointer = const value_type*;
-
+    
     //=====================
     // Member functions
     //=====================
@@ -40,7 +39,7 @@ public:
 
     // Move constructor
     Str(Str&& other) noexcept;
-
+    
     // Dectructor
     ~Str();
 
@@ -93,6 +92,8 @@ public:
     //=====================
     // Operations
     //=====================
+    
+    void soother();
 
     void clear();
 
@@ -117,11 +118,17 @@ public:
     //=====================
 
     //  Finds the first substring equal to str. Search begins at pos
-    size_type find(const Str& str, size_type pos = 0) const noexcept;
+    size_type find(const Str& st, size_type pos = 0) const noexcept;
 
-    size_type find(const char* str, size_type pos = 0) const noexcept;
+    size_type find(const char* st, size_type pos = 0) const noexcept;
 
     size_type find(value_type ch, size_type pos = 0) const noexcept;
+
+private:
+    size_type len;
+    size_type memory;
+    pointer str;
+
 };
 
 //=====================
@@ -132,13 +139,19 @@ public:
 Str operator+(const Str& lhs, const Str& rhs);
 
 // Lexicographically compares two strings
-Str operator==(const Str& lhs, const Str& rhs);
-Str operator!=(const Str& lhs, const Str& rhs);
-Str operator<(const Str& lhs, const Str& rhs);
-Str operator>(const Str& lhs, const Str& rhs);
-Str operator<=(const Str& lhs, const Str& rhs);
-Str operator>=(const Str& lhs, const Str& rhs);
+bool operator==(const Str& lhs, const Str& rhs);
+
+bool operator!=(const Str& lhs, const Str& rhs);
+
+bool operator<(const Str& lhs, const Str& rhs);
+
+bool operator>(const Str& lhs, const Str& rhs);
+
+bool operator<=(const Str& lhs, const Str& rhs);
+
+bool operator>=(const Str& lhs, const Str& rhs);
 
 // Performs stream output on Str
-std::ostream& operator<<(std::ostream& stream, const Str& str);
+std::ostream& operator<<(std::ostream& stream, const Str& rhs);
+
 }
