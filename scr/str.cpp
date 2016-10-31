@@ -174,6 +174,7 @@ void Str::push_back(value_type ch)
         len++;
         str[len-1] = ch;
         str[len] = npos;
+        return;
     } 
 
     if(!len){
