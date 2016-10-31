@@ -169,31 +169,31 @@ void Str::clear()
 
 void Str::push_back(value_type ch)
 {
-    len++;
-    if(len <= memory){
+    
+    if(len < memory){
+        len++;
         str[len-1] = ch;
         str[len] = npos;
-    }
+    } 
 
-    if(!memory){
-        pointer ptr = new value_type[2];
-        if(!ptr){
-            len--;
-            throw std::bad_alloc();
-        }
-        memory = 1;
+    if(!len){
+        //unsafe
+        char* ptr = new char[2];
+        //safe
+        memory++;
+        len++;
         ptr[0] = ch;
         ptr[1] = npos;
         str = ptr;
+        return;
     }
-
-    if(len > memory){
-        pointer ptr = new value_type[ 2 * memory + 1];
-        if(!ptr){
-            len--;
-            throw std::bad_alloc();
-        }
+   
+    if(len == memory){
+        //unsafe
+        char* ptr = new char[ 2 * memory + 1];
+        //safe
         memory *= 2;
+        ++len;
         strcpy(ptr,str);
         ptr[len-1] = ch;
         ptr[len] = npos;
